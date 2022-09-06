@@ -37,9 +37,9 @@ public class ModulePrototypeEditorData {
 
 	public ConnectorHint GetConnectorHint(int direction) {
 		var face = this.ModulePrototype.Faces[direction];
+		var potententialHints = new List<ConnectorHint>();
 		if (face is ModulePrototype.HorizontalFaceDetails) {
 			var horizontalFace = face as ModulePrototype.HorizontalFaceDetails;
-			
 			foreach (var prototype in this.prototypes) {
 				if (prototype == this.ModulePrototype || face.ExcludedNeighbours.Contains(prototype)) {
 					continue;
@@ -50,7 +50,8 @@ public class ModulePrototypeEditorData {
 						continue;
 					}
 					if (otherFace.Connector == face.Connector && ((horizontalFace.Symmetric && otherFace.Symmetric) || otherFace.Flipped != horizontalFace.Flipped)) {
-						return new ConnectorHint(rotation, this.getMesh(prototype));
+						potententialHints.Add(new ConnectorHint(rotation, this.getMesh(prototype)));
+						// return ;
 					}
 				}
 			}
@@ -68,10 +69,16 @@ public class ModulePrototypeEditorData {
 					continue;
 				}
 
-				return new ConnectorHint(verticalFace.Rotation - otherFace.Rotation, this.getMesh(prototype));
+				potententialHints.Add(new ConnectorHint(verticalFace.Rotation - otherFace.Rotation, this.getMesh(prototype)));
+				// return ;
 			}
 		}
-
-		return new ConnectorHint();
+		if (potententialHints.Count != 0) {
+			int select = Mathf.Max(0,Mathf.Min(potententialHints.Count-1, face.PreviewHint));
+			return potententialHints[select];
+		} else {
+			return new ConnectorHint();
+		}
+		
 	}
 }

@@ -12,6 +12,9 @@ public class ModulePrototype : MonoBehaviour {
 
 		public int Connector;
 
+		[Range(0, 100)]
+		public int PreviewHint;
+
 		public virtual void ResetConnector() {
 			this.Connector = 0;
 		}
